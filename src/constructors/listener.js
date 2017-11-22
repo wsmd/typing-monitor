@@ -34,15 +34,6 @@ class ListenerTypingMonitor {
     this.listeners = [];
     this.monitor = new StaticMonitor({ wait: options.wait });
     (this: any).handleInput = this.handleInput.bind(this);
-    this.addEventListener();
-  }
-
-  addEventListener() {
-    this.input.addEventListener('input', this.handleInput, true);
-  }
-
-  removeEventListener() {
-    this.input.addEventListener('input', this.handleInput, true);
   }
 
   handleInput() {
@@ -57,12 +48,15 @@ class ListenerTypingMonitor {
     if (index >= 0) {
       this.listeners.splice(index, 1);
       if (this.listeners.length === 0) {
-        this.removeEventListener();
+        this.input.removeEventListener('input', this.handleInput, true);
       }
     }
   }
 
   listen(listener: Listener): () => void {
+    if (this.listeners.length === 0) {
+      this.input.addEventListener('input', this.handleInput, true);
+    }
     this.listeners.push(listener);
     return this.unsubscribe.bind(this, listener);
   }
