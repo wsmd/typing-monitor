@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/wsmd/typing-monitor.svg?branch=master)](https://travis-ci.org/wsmd/typing-monitor)
 [![Coverage Status](https://coveralls.io/repos/github/wsmd/typing-monitor/badge.svg?branch=master)](https://coveralls.io/github/wsmd/typing-monitor?branch=master)
 
-### <img src="https://user-images.githubusercontent.com/2100222/32193191-e9f0c0a4-bd8c-11e7-8c1c-a47c4cf8e456.png" alt="TypingMonitor" width="280" />
+### <img src="https://raw.githubusercontent.com/wsmd/typing-monitor/master/logo/logo.png" alt="TypingMonitor" width="280" />
 
 > Keyboard typing detection made easy.
 
