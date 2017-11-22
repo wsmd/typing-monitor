@@ -47,6 +47,10 @@
     "regenerator-runtime": "0.11.0"
   },
   "jest": {
-    "testRegex": "(/test/.*\\.test.js)$"
+    "testRegex": "(/test/.*\\.test.js)$",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/helpers/"
+    ]
   }
 }
