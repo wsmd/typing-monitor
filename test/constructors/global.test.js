@@ -2,54 +2,72 @@
 
 import GlobalTypingMonitor from '../../src/constructors/global';
 import simulateInputChange from '../helpers/simulateInputChange';
+import '../helpers/spyConsoleError';
 
 jest.useFakeTimers();
 
-beforeEach(() => {
+beforeAll(() => {
   document.body.innerHTML = `
-    <input id="input1" type="text" />
-    <input id="input2" type="text" />
+    <input type="text" />
+    <textarea></textarea>
   `;
 });
 
 describe('GlobalTypingMonitor', () => {
-  it('works', () => {
-    const callback = jest.fn();
-    const input1 = document.querySelector('input#input1');
-    const input2 = document.querySelector('input#input2');
-    const monitor = new GlobalTypingMonitor({ wait: 500 });
+  const INITIAL_WAIT = 500;
 
-    // TODO: test unsubscribe
-    monitor.listen(callback);
+  it('listens to one or more elements on the page', () => {
+    const spy = jest.fn();
+    const input = document.querySelector('input');
+    const textarea = document.querySelector('textarea');
+    const monitor = new GlobalTypingMonitor({ wait: INITIAL_WAIT });
+    const unsubscribe = monitor.listen(spy);
 
-    simulateInputChange(input1);
-    simulateInputChange(input2);
+    simulateInputChange(input);
+    jest.runTimersToTime(INITIAL_WAIT - 1); // pause then type again
+    simulateInputChange(textarea);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenLastCalledWith(true);
 
-    expect(callback).toHaveBeenCalledTimes(1);
-    expect(callback).toHaveBeenCalledWith(true);
+    jest.runTimersToTime(INITIAL_WAIT);
+    expect(spy).toHaveBeenLastCalledWith(false);
 
-    jest.runAllTimers();
+    simulateInputChange(textarea);
+    expect(spy).toHaveBeenLastCalledWith(true);
 
-    expect(callback).toHaveBeenCalledTimes(2);
-    expect(callback).toHaveBeenLastCalledWith(false);
+    jest.runTimersToTime(INITIAL_WAIT);
+    expect(spy).toHaveBeenLastCalledWith(false);
+
+    unsubscribe();
   });
 
-  it('works as a singleton', () => {
-    const preSpy = console.error;
+  it('unsubscribes listeners', () => {
     const spy = jest.fn();
-    console.error = spy;
+    const input = document.querySelector('input');
+    const monitor = new GlobalTypingMonitor({ wait: 500 });
+    const unsubscribe = monitor.listen(spy);
 
-    const monitor1 = new GlobalTypingMonitor({ wait: 1000 });
+    unsubscribe();
+    simulateInputChange(input);
+    expect(spy).not.toHaveBeenCalled();
+  });
 
-    expect(spy.mock.calls[0][0]).toMatch(
-      /You are creating a new instance of GlobalTypingMonitor.+500ms/
+  /**
+   * this test assumes that we've created two instances from the tests above
+   */
+  it('warns about creating multiple instances', () => {
+    // eslint-disable-next-line
+    const monitor = new GlobalTypingMonitor({ wait: 1000 });
+    const errorMessage = new RegExp(
+      'Another instance has been previously created with a waiting period of ' +
+      `${INITIAL_WAIT}ms`
     );
+    expect(console.error.mock.calls[1][0]).toMatch(errorMessage);
+  });
 
-    const monitor2 = new GlobalTypingMonitor({ wait: 2000 });
-
+  it('returns a singleton', () => {
+    const monitor1 = new GlobalTypingMonitor({ wait: 1000 });
+    const monitor2 = new GlobalTypingMonitor({ wait: 1000 });
     expect(monitor1).toBe(monitor2);
-    expect(monitor1).toBe(monitor2);
-
-    console.error = preSpy;
   });
 });
