@@ -9,8 +9,9 @@
     "build:watch": "babel -w src/ -d dist/",
     "flow": "flow",
     "start": "babel-node -w --presets flow",
-    "test": "jest --verbose ",
+    "test": "jest --verbose --coverage",
     "test:watch": "jest --coverage --watch",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "prepare": "yarn run test && yarn run lint"
   },
   "repository": {
@@ -36,6 +37,7 @@
     "babel-jest": "21.2.0",
     "babel-preset-es2015": "6.24.1",
     "babel-preset-flow": "6.23.0",
+    "coveralls": "3.0.0",
     "eslint": "4.11.0",
     "eslint-config-airbnb-base": "12.1.0",
     "eslint-config-airbnb-flow": "1.0.2",
