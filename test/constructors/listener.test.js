@@ -4,79 +4,64 @@ import simulateInputChange from '../helpers/simulateInputChange';
 jest.useFakeTimers();
 
 describe('ListenerTypingMonitor', () => {
-  it('listens to an element change', () => {
-    const element = document.createElement('input');
-    const callback = jest.fn();
+  it('listens to an input change', () => {
+    const WAIT = 1000;
+    const spy = jest.fn();
+    const input = document.createElement('input');
+    const monitor = new ListenerTypingMonitor({ wait: WAIT, input });
 
-    const monitor = new ListenerTypingMonitor({
-      wait: 1000,
-      input: element,
-    });
+    monitor.listen(spy);
 
-    monitor.listen(callback);
+    simulateInputChange(input);
+    jest.runTimersToTime(WAIT - 1);
+    simulateInputChange(input);
 
-    simulateInputChange(element);
-    simulateInputChange(element);
+    expect(spy).toHaveBeenCalledWith(true);
+    expect(spy).toHaveBeenCalledTimes(1);
 
-    expect(callback).toHaveBeenCalledWith(true);
-    expect(callback).toHaveBeenCalledTimes(1);
+    jest.runTimersToTime(WAIT);
 
-    jest.runAllTimers();
-
-    expect(callback).toHaveBeenCalledWith(false);
-
-    expect(() => {
-      new ListenerTypingMonitor(); // eslint-disable-line
-    }).toThrow();
+    expect(spy).toHaveBeenCalledWith(false);
   });
 
-  it('listens to an element change', () => {
-    const element = document.createElement('input');
-    const callback = jest.fn();
+  it('unsubscribes listeners and re-listens', () => {
+    const input = document.createElement('input');
+    const monitor = new ListenerTypingMonitor({ wait: 1000, input });
+    const spy = jest.fn();
+    const unsubscribe = monitor.listen(spy);
 
-    const monitor = new ListenerTypingMonitor({
-      wait: 1000,
-      input: element,
-    });
-
-    const unsubscribe = monitor.listen(callback);
     unsubscribe();
-
-    simulateInputChange(element);
-    expect(callback).not.toHaveBeenCalled();
-  });
-
-  it('creates multiple listeners', () => {
-    const element = document.createElement('input');
-    const callback1 = jest.fn();
-    const callback2 = jest.fn();
-
-    const monitor = new ListenerTypingMonitor({
-      wait: 1000,
-      input: element,
-    });
-
-    const unsubscribe1 = monitor.listen(callback1);
-    const unsubscribe2 = monitor.listen(callback2); // eslint-disable-line
-
-    simulateInputChange(element);
-
-    expect(callback1).toHaveBeenCalledWith(true);
-    expect(callback2).toHaveBeenCalledWith(true);
+    simulateInputChange(input);
+    expect(spy).not.toHaveBeenCalled();
 
     jest.runAllTimers();
 
-    expect(callback1).toHaveBeenCalledWith(false);
-    expect(callback2).toHaveBeenCalledWith(false);
+    monitor.listen(spy);
+    simulateInputChange(input);
+    expect(spy).toHaveBeenCalled();
+  });
 
+  it('creates and unsubscribes multiple listeners', () => {
+    const input = document.createElement('input');
+    const monitor = new ListenerTypingMonitor({ wait: 1000, input });
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+    const spies = [spy1, spy2];
+
+    const unsubscribe1 = monitor.listen(spy1);
+    const unsubscribe2 = monitor.listen(spy2); // eslint-disable-line
+
+    simulateInputChange(input);
+    spies.forEach(spy => expect(spy).toHaveBeenCalledWith(true));
+    jest.runAllTimers();
+    spies.forEach(spy => expect(spy).toHaveBeenCalledWith(false));
+
+    spies.forEach(spy => spy.mockClear());
     unsubscribe1();
 
-    simulateInputChange(element);
-
-    jest.runAllTimers();
-
-    expect(callback1).toHaveBeenCalledTimes(2);
-    expect(callback2).toHaveBeenCalledTimes(4);
+    simulateInputChange(input);
+    expect(spy1).not.toHaveBeenCalled();
+    expect(spy2).toHaveBeenCalled();
   });
 
   it('throws on invalid options', () => {
