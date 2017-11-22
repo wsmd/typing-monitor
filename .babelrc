@@ -1,8 +1,8 @@
 {
-  "presets": [["es2015", { "modules": false }], "flow"],
+  "presets": ["env", "flow"],
   "env": {
     "test": {
-      "presets": [["es2015"], "flow"]
+      "presets": ["env", "flow"]
     }
   }
 }
