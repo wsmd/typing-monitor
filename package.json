@@ -9,8 +9,9 @@
     "build:watch": "babel -w src/ -d dist/",
     "flow": "flow",
     "start": "babel-node -w --presets flow",
-    "test": "jest --coverage",
-    "test:watch": "jest --coverage --watch --verbose"
+    "test": "jest --verbose ",
+    "test:watch": "jest --coverage --watch",
+    "prepare": "yarn run test && yarn run lint"
   },
   "repository": {
     "type": "git",
