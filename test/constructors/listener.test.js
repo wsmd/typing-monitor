@@ -1,9 +1,5 @@
 import ListenerTypingMonitor from '../../src/constructors/listener';
-
-const INPUT_EVENT = new Event('input');
-export function simulateInputChange(element) {
-  element.dispatchEvent(INPUT_EVENT);
-}
+import simulateInputChange from '../helpers/simulateInputChange';
 
 jest.useFakeTimers();
 

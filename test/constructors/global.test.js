@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import GlobalTypingMonitor from '../../src/constructors/global';
-import { simulateInputChange } from './listener.test';
+import simulateInputChange from '../helpers/simulateInputChange';
 
 jest.useFakeTimers();
 
