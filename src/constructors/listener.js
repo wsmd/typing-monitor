@@ -1,6 +1,6 @@
 // @flow
+
 import StaticMonitor from './static';
-import Stack from '../utils/stack';
 import isInput from '../utils/isInput';
 
 type Listener = (isTyping?: boolean) => void;
@@ -19,7 +19,7 @@ class ListenerTypingMonitor {
   wait: number;
   input: InputElement;
   monitor: StaticMonitor;
-  listeners: Stack;
+  listeners: Array<Listener>;
 
   constructor(options: Options) {
     const hasOptions = typeof options !== 'undefined';
@@ -31,7 +31,7 @@ class ListenerTypingMonitor {
     }
     this.wait = options.wait;
     this.input = options.input;
-    this.listeners = new Stack();
+    this.listeners = [];
     this.monitor = new StaticMonitor({ wait: options.wait });
     (this: any).handleInput = this.handleInput.bind(this);
     this.addEventListener();
@@ -47,19 +47,23 @@ class ListenerTypingMonitor {
 
   handleInput() {
     this.monitor.listen((isTyping) => {
-      this.listeners.each(listener => listener(isTyping));
+      this.listeners.forEach(listener => listener(isTyping));
     });
   }
 
   unsubscribe(listener: Listener) {
-    this.listeners.remove(listener);
-    if (this.listeners.length === 0) {
-      this.removeEventListener();
+    const index = this.listeners.indexOf(listener);
+    /* istanbul ignore else */
+    if (index >= 0) {
+      this.listeners.splice(index, 1);
+      if (this.listeners.length === 0) {
+        this.removeEventListener();
+      }
     }
   }
 
   listen(listener: Listener): () => void {
-    this.listeners.add(listener);
+    this.listeners.push(listener);
     return this.unsubscribe.bind(this, listener);
   }
 }
