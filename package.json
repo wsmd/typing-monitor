@@ -5,14 +5,12 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "babel src/ -d dist/",
-    "lint": "eslint src test build",
-    "build:watch": "babel -w src/ -d dist/",
-    "flow": "flow check",
-    "start": "babel-node -w --presets flow",
-    "test": "jest --verbose --coverage",
-    "test:watch": "jest --coverage --watch",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "prepare": "yarn run lint && yarn run flow && yarn run test"
+    "flow": "flow check",
+    "lint": "eslint src test build",
+    "prepare": "yarn run lint && yarn run flow && yarn run test",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -49,6 +47,6 @@
     "regenerator-runtime": "0.11.0"
   },
   "jest": {
-    "testRegex": "(/test/.*.test.js)$"
+    "testRegex": "(/test/.*\\.test.js)$"
   }
 }
