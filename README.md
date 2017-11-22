@@ -1,10 +1,10 @@
-> ⚠️ This is under active development and not available for production use yet.
+[![Build Status](https://travis-ci.org/wsmd/typing-monitor.svg?branch=master)](https://travis-ci.org/wsmd/typing-monitor)
 
-# <img src="https://user-images.githubusercontent.com/2100222/32193191-e9f0c0a4-bd8c-11e7-8c1c-a47c4cf8e456.png" alt="TypingMonitor" width="280" />
+### <img src="https://user-images.githubusercontent.com/2100222/32193191-e9f0c0a4-bd8c-11e7-8c1c-a47c4cf8e456.png" alt="TypingMonitor" width="280" />
 
 > Keyboard typing detection made easy.
 
-## Why `TypingMonitor`?
+> ⚠️ Note: This is under active development and not available for production use yet
 
 ## API
 
