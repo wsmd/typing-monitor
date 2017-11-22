@@ -7,12 +7,12 @@
     "build": "babel src/ -d dist/",
     "lint": "eslint src test build",
     "build:watch": "babel -w src/ -d dist/",
-    "flow": "flow",
+    "flow": "flow check",
     "start": "babel-node -w --presets flow",
     "test": "jest --verbose --coverage",
     "test:watch": "jest --coverage --watch",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "prepare": "yarn run test && yarn run lint"
+    "prepare": "yarn run lint && yarn run flow && yarn run test"
   },
   "repository": {
     "type": "git",
