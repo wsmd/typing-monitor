@@ -16,6 +16,16 @@ describe('utils/warning', () => {
     }
   });
 
+  it('does not throw when console is not available', () => {
+    const realConsole = console;
+    Object.defineProperty(global, 'console', { value: undefined });
+    try {
+      expect(() => warning('please do not throw')).not.toThrow();
+    } finally {
+      Object.defineProperty(global, 'console', { value: realConsole });
+    }
+  });
+
   it('does not throw when console.error is not available', () => {
     const realConsole = console;
     Object.defineProperty(global, 'console', { value: {} });
