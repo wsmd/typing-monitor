@@ -41,7 +41,9 @@ describe('GlobalTypingMonitor', () => {
 
     const monitor1 = new GlobalTypingMonitor({ wait: 1000 });
 
-    expect(spy.mock.calls[0][0]).toMatch(/You are creating a new instance of GlobalTypingMonitor.+500ms/);
+    expect(spy.mock.calls[0][0]).toMatch(
+      /You are creating a new instance of GlobalTypingMonitor.+500ms/
+    );
 
     const monitor2 = new GlobalTypingMonitor({ wait: 2000 });
 

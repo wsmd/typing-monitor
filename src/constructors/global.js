@@ -24,9 +24,11 @@ class GlobalTypingMonitor {
       });
       instance = this;
     } else {
-      warning('You are creating a new instance of GlobalTypingMonitor. Another ' +
+      warning(
+        'You are creating a new instance of GlobalTypingMonitor. Another ' +
         'instance has been previously created with a waiting period of ' +
-        `${instance.wait}ms. The original instance will be used instead.`);
+        `${instance.wait}ms. The original instance will be used instead.`
+      );
     }
     return instance;
   }
