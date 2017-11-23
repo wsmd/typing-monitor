@@ -1,11 +1,13 @@
 [![Build Status](https://travis-ci.org/wsmd/typing-monitor.svg?branch=master)](https://travis-ci.org/wsmd/typing-monitor)
 [![Coverage Status](https://coveralls.io/repos/github/wsmd/typing-monitor/badge.svg?branch=master)](https://coveralls.io/github/wsmd/typing-monitor?branch=master)
+![](https://img.shields.io/badge/module-umd%2C%20cjs%2C%20es-brightgreen.svg)
+[![License](https://img.shields.io/github/license/wsmd/typing-monitor.svg)](https://github.com/wsmd/typing-monitor/blob/master/LICENSE)
 
 ### <img src="https://raw.githubusercontent.com/wsmd/typing-monitor/master/logo/logo.png" alt="TypingMonitor" width="280" />
 
 > Keyboard typing detection made easy.
 
-> ⚠️ Note: This is under active development and not available for production use yet
+> *⚠️ This is under active development and not available for production use yet*
 
 ## API
 
