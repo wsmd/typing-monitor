@@ -2,25 +2,37 @@
 
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
-
-const compact = arr => arr.filter(Boolean);
+import compact from 'lodash.compact';
+import pkg from './package.json';
 
 const prod = process.env.PRODUCTION;
-const esbundle = process.env.ESBUNDLE;
+const esbundle = process.env.ES;
+const cjs = process.env.CJS;
+const umd = process.env.UMD;
 
-let output;
-if (prod) {
-  console.log('\nCreating production UMD bundle...');
-  output = [{ file: 'dist/typing-monitor.min.js', format: 'umd' }];
-} else if (esbundle) {
-  console.log('\nCreating production ES bundle...');
-  output = [{ file: 'dist/typing-monitor.es.js', format: 'es' }];
-} else {
+const config = {
+  input: 'src/index.js',
+  name: 'TypingMonitor',
+};
+
+const base = pkg.main.split('.')[0];
+if (esbundle) {
+  console.log('\nCreating ES bundle...');
+  config.output = { format: 'es', file: pkg.module };
+} else if (cjs) {
+  console.log('\nCreating production CJS bundle...');
+  config.output = { format: 'cjs', file: pkg.main };
+} else if (umd && prod) {
   console.log('\nCreating development UMD bundle...');
-  output = [{ file: 'dist/typing-monitor.js', format: 'umd' }];
+  config.output = { format: 'umd', file: `${base}.umd.js` };
+} else if (umd) {
+  console.log('\nCreating production UMD bundle...');
+  config.output = { format: 'umd', file: `${base}.umd.min.js` };
 }
 
-const plugins = compact([
+if (umd) config.sourcemap = true;
+
+config.plugins = compact([
   babel({
     babelrc: false,
     presets: [
@@ -33,12 +45,5 @@ const plugins = compact([
   }),
   prod && uglify(),
 ]);
-
-const config = {
-  input: 'src/index.js',
-  name: 'TypingMonitor',
-  plugins,
-  output,
-};
 
 export default config;

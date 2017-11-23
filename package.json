@@ -2,16 +2,12 @@
   "name": "typing-monitor",
   "version": "0.1.0",
   "description": "Keyboard typing detection made easy",
-  "main": "lib/index.js",
+  "main": "dist/typing-monitor.cjs.js",
   "jsnext:main": "dist/typing-monitor.es.js",
   "module": "dist/typing-monitor.es.js",
   "scripts": {
-    "build": "yarn run build:dist && yarn run build:lib",
-    "build:dist": "rollup -c && rollup -c --environment ESBUNDLE && rollup -c --environment PRODUCTION",
-    "prebuild:dist": "rimraf dist/*",
-    "build:lib": "babel src/ -d lib/",
-    "prebuild:lib": "rimraf lib/*",
-    "build:watch": "npm run build:lib -- --watch",
+    "build": "rollup -c --environment UMD && rollup -c --environment UMD,PRODUCTION && rollup -c --environment CJS && rollup -c --environment ES",
+    "prebuild": "rimraf dist/*",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "flow": "flow check",
     "lint": "eslint src test build",
@@ -19,6 +15,10 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wsmd/typing-monitor.git"
@@ -52,6 +52,7 @@
     "eslint-plugin-jest": "21.3.2",
     "flow-bin": "0.59.0",
     "jest": "21.2.1",
+    "lodash.compact": "3.0.1",
     "regenerator-runtime": "0.11.0",
     "rimraf": "2.6.2",
     "rollup": "0.51.8",
