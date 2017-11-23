@@ -24,10 +24,10 @@ if (esbundle) {
   config.output = { format: 'cjs', file: pkg.main };
 } else if (umd && prod) {
   console.log('\nCreating development UMD bundle...');
-  config.output = { format: 'umd', file: `${base}.umd.js` };
+  config.output = { format: 'umd', file: `${base}.umd.min.js` };
 } else if (umd) {
   console.log('\nCreating production UMD bundle...');
-  config.output = { format: 'umd', file: `${base}.umd.min.js` };
+  config.output = { format: 'umd', file: `${base}.umd.js` };
 }
 
 if (umd) config.sourcemap = true;
