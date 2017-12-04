@@ -7,33 +7,66 @@
 
 > Keyboard typing detection made easy.
 
-> *⚠️ This is under active development and not available for production use yet*
+## Why?
+
+`TypingMonitor` is a keyboard-input detection library for the web.
+
+It helps you detect when a user starts or stops typing inside your app. One of the most common use cases of this library is detecting input/keyboard activity in messaging and chat-based applications.
+
+## Installation
+
+To install `TypingMonitor` as a CommonJS module via a package manager:
+
+```bash
+# using npm
+npm install --save typing-monitor
+
+# using yarn
+yarn add typing-monitor
+```
+
+```js
+import TypingMonitor from 'typing-monitor'
+```
+
+If you are not using a package manager or a module bundler, you can access the pre-compiled production and development UMD builds [from here]().
+
+You can include the build file in a script tag on your page. The UMD builds make `TypingMonitor` available as a `window.TypingMonitor` global variable.
 
 ## API
 
-`TypingMonitor` offers 3 different interfaces for different scenarios:
+`TypingMonitor` offers 3 different interfaces to handle different scenarios:
 
-- [`TypingMonitor.Static → StaticTypingMonitor`](#typingmonitorstaticoptions-%E2%86%92-statictypingmonitor)
-- [`TypingMonitor.Global → GlobalTypingMonitor`](#typingmonitorglobaloptions-%E2%86%92-globaltypingmonitor)
-- [`TypingMonitor.Listener → ListenerTypingMonitor`](#typingmonitorlisteneroptions-%E2%86%92-listenertypingmonitor)
+- [`TypingMonitor.Static → StaticTypingMonitor`](#new-typingmonitorstaticoptions-object--statictypingmonitor)
+- [`TypingMonitor.Global → GlobalTypingMonitor`](#new-typingmonitorglobaloptions--globaltypingmonitor)
+- [`TypingMonitor.Listener → ListenerTypingMonitor`](#new-typingmonitorlisteneroptions--listenertypingmonitor)
 
 ### `new TypingMonitor.Static(options: Object)` → `StaticTypingMonitor`
 
 #### Highlights
 
-- `TypingMonitor` is an alias of `TypingMonitor.Static`.
-- Used independently without listening to actual inputs.
-- Meant to be used within existing event handlers; e.g. `React`'s `onInput`.
+- Meant to be used within an exiting `input` event handler (e.g. `React`'s `onInput`).
+- `TypingMonitor.Static` is an alias of `TypingMonitor`
+
+```js
+import TypingMonitor from 'typing-monitor';
+
+const monitor = new TypingMonitor({/* options */});
+
+// or
+
+const monitor = new TypingMonitor.Static({/* options */});
+```
 
 #### Options
 
-- `wait` (*Number*): duration, in milliseconds, between each input change to determine if the user stopped typing.
+- `wait` (*Number*): duration, in milliseconds, between each call to determine if the user has stopped typing.
 
 #### Instance Methods
 
 #### `monitor.listen(listener: boolean → void)`
 
-Used to detect if whether or not the user is typing. Ideally, it should be called within an event handler.
+Used to detect whether or not the user is typing.
 
 ##### Arguments
 
@@ -48,8 +81,8 @@ class MessageInput extends React.Component {
   componentDidMount() {
     const { discussion, user } = this.props;
     this.dbRef = db.ref(`/discussions/${discussion.id}/users/${user.id}`);
-    // using TypingMonitor is same as using TypingMonitor.Static
-    this.typingMonitor = new TypingMonitor({ wait: 1000 });
+    // using TypingMonitor is the same as using TypingMonitor.Static
+    this.typingMonitor = new TypingMonitor.Static({ wait: 1000 });
   }
 
   handleInput(e) {
@@ -69,13 +102,12 @@ class MessageInput extends React.Component {
 
 ### `new TypingMonitor.Global(options)` → `GlobalTypingMonitor`
 
-**Notes**
+#### Highlights
 
-- Listens to the global/window 'input' event
-- Works only to `<input />` and `<textarea />`
-- Instances of GlobalTypingMonitor points to a singleton
-- `monitor#listen` adds a new handler
-- `monitor#listen` returns a destroy method for a specific handler
+- Listens to the `input` event on the global/window.
+- New instances of `GlobalTypingMonitor` references a singleton.
+- Every `monitor#listen` registers a new listener.
+- Each `monitor#listen` returns a function to unsubscribe the listener.
 
 #### Options
 
@@ -83,9 +115,17 @@ class MessageInput extends React.Component {
 
 #### Instance Methods
 
-#### `monitor.listen(listener: boolean → void)`
+#### `monitor.listen(listener: boolean → void): unsubscribe`
 
-Used to detect if whether or not the user is typing. Ideally, it should be called within an event handler.
+Used to detect whether or not the user is typing.
+
+##### Arguments
+
+1. `listener` (*Function*): A callback function to be called every time the user starts or stops typing. Has one argument of type `boolean` indicating the typing status.
+
+##### Returns
+
+`unsubscribe` (*Function*): A function that unsubscribes the listener
 
 **Example**
 
@@ -95,7 +135,7 @@ import TypingMonitor from 'typing-monitor';
 const globalMonitor = new TypingMonitor.Global({ wait: 1000 });
 
 const unsubscribe = globalMonitor.listen((isTyping) => {
-  console.log(isTyping ? 'typing' : 'stopped');
+  console.log(isTyping ? 'user is typing' : 'user stopped typing');
 });
 
 unsubscribe(); // stop listening
@@ -103,23 +143,30 @@ unsubscribe(); // stop listening
 
 ### `new TypingMonitor.Listener(options)` → `ListenerTypingMonitor`
 
-**Notes**
+#### Highlights
 
-- Listens to the `input` event of `options.input`
-- Works only to `<input />` and `<textarea />`
-- Assigns a new handler on each `monitor#listen`
-- `monitor#listen` returns a destroy method for each handler
+- Listens to the `input` event of the element passed to `options.input`
+- Works only on `<input />` and `<textarea />`
+- Every `monitor#listen` registers a new listener
 
 #### Options
 
-- `wait: Number`: duration, in milliseconds, between each input change to determine if the user stopped typing.
-- `input: HTMLInputElement | HTMLTextAreaElement`:
+- `wait` (*Number*): duration, in milliseconds, between each input change to determine if the user stopped typing.
+- `input: HTMLInputElement | HTMLTextAreaElement`.
 
 #### Instance Methods
 
-#### `monitor.listen(listener: boolean → void)`
+#### `monitor.listen(listener: boolean → void): unsubscribe`
 
-Used to detect if whether or not the user is typing. Ideally, it should be called within an event handler.
+Used to detect whether or not the user is typing.
+
+##### Arguments
+
+1. `listener` (*Function*): A callback function to be called every time the user starts or stops typing. Has one argument of type `boolean` indicating the typing status.
+
+##### Returns
+
+`unsubscribe` (*Function*): A function that unsubscribes the listener
 
 **Example**
 
