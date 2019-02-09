@@ -6,18 +6,19 @@
   "jsnext:main": "dist/typing-monitor.es.js",
   "module": "dist/typing-monitor.es.js",
   "scripts": {
+    "clean": "rm -rf dist",
     "build": "rollup -c --environment UMD && rollup -c --environment UMD,PRODUCTION && rollup -c --environment CJS && rollup -c --environment ES",
     "prebuild": "rimraf dist/*",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "flow": "flow check",
     "lint": "eslint src test build",
-    "prepare": "yarn run lint && yarn run flow && yarn run test",
+    "prepack": "yarn run lint && yarn run flow && yarn run test",
+    "prepublishOnly": "yarn run clean && yarn run build",
     "test": "jest --coverage",
     "test:watch": "jest --watch"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "repository": {
     "type": "git",
